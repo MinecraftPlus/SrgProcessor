@@ -1,14 +1,11 @@
 package org.minecraftplus.api;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import org.minecraftplus.map.SrgMapper;
-import org.minecraftplus.util.io.FileOutputSupplier;
-import net.minecraftforge.srg2source.api.OutputSupplier;
+import net.minecraftforge.srgutils.SrgMapper;
 
 public class SrgMapperBuilder
 {
@@ -16,8 +13,8 @@ public class SrgMapperBuilder
     private PrintStream logErr = System.err;
 
     private List<Consumer<SrgMapper>> srgs = new ArrayList<>();
-    private OutputSupplier output = null;
-    
+    private Path output = null;
+
     public SrgMapperBuilder logger(PrintStream value) {
         this.logStd = value;
         return this;
@@ -34,11 +31,7 @@ public class SrgMapperBuilder
     }
 
     public SrgMapperBuilder output(Path value) {
-        try {
-            this.output = new FileOutputSupplier(value);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Invalid output: " + value, e);
-        }
+        this.output = value;
         return this;
     }
 
@@ -49,7 +42,7 @@ public class SrgMapperBuilder
             throw new IllegalStateException("Builder State Exception: Missing Output");
 
         SrgMapper mapper = new SrgMapper().setLogger(logStd).setErrorLogger(logErr);
-        
+
         mapper.setOutput(output);
 
         srgs.forEach(e -> e.accept(mapper));
