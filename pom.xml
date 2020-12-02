@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.minecraftplus</groupId>
 	<artifactId>srgprocessor</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>SrgProcessor</name>
 
 	<properties>
@@ -80,7 +80,7 @@
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<createSourcesJar>false</createSourcesJar>
-							<outputFile>${project.build.directory}\${project.artifactId}.jar</outputFile>
+							<shadedArtifactAttached>false</shadedArtifactAttached>
 						</configuration>
 					</execution>
 				</executions>
