@@ -77,6 +77,7 @@ public class SrgMapper extends ConfLogger<SrgMapper>
         for (IMappingFile file : srgs) {
             log(" Maping size: " + file.getClasses().size());
         }
+        log("\n");
 
         BiPredicate<IMethod, IMethod> matchingMethod = (m1, m2) -> (m1 != null && m2 != null
             && m1.getOriginal().equals(m2.getOriginal()) && m1.getDescriptor().equals(m2.getDescriptor()));
