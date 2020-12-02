@@ -19,58 +19,35 @@ import net.minecraftforge.srgutils.MappingFile.Cls.Method;
 
 public class SrgMapper extends ConfLogger<SrgMapper>
 {
+    public final static BiPredicate<IMethod, IMethod> MATCHING_METHOD = (m1, m2) -> (m1 != null && m2 != null
+        && m1.getOriginal().equals(m2.getOriginal()) && m1.getDescriptor().equals(m2.getDescriptor()));
+    public final static BiPredicate<IField, IField> MATCHING_FIELD = (f1,
+        f2) -> (f1 != null && f2 != null && f1.getOriginal().equals(f2.getOriginal()));
+
     private List<IMappingFile> srgs = new ArrayList<>();
-//    private Map<Integer, Map<String, String>> clsSrc2Internal = new HashMap<Integer, Map<String, String>>();
 
-    private Path output = null;
-
-    MappingFile outputSrg;
+    private Path outputPath = null;
+    private MappingFile outputSrg;
 
     public void readSrg(Path srg) {
         try (InputStream in = Files.newInputStream(srg)) {
             IMappingFile map = IMappingFile.load(in);
             srgs.add(map);
-
-//            Map<String, String> internals = new HashMap<>();
-//            map.getClasses()
-//                .forEach(c -> internals.put(c.getOriginal().replace('/', '.').replace('$', '.'), c.getMapped()));
-//            clsSrc2Internal.put(map.hashCode(), internals);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to read SRG: " + srg, e);
         }
     }
 
     public void setOutput(Path output) {
-        this.output = output;
+        this.outputPath = output;
     }
-
-    static Scanner consoleScanner = new Scanner(System.in);
-
-    //Jobs  
-    static Progress classMappingProgress = new Progress();
-    static Progress fieldMappingProgress = new Progress();
-    static Progress methodMappingProgress = new Progress();
-    static Progress unusedClassesMappingProgress = new Progress();
-    static Progress unusedFieldMappingProgress = new Progress();
-    static Progress unusedMethodMappingProgress = new Progress();
-
-    static String[] ignoredPackages = new String[] { "java/", "javax/", "com/", "org/", "it/", "io/",
-        "net/minecraft/realms", "joptsimple/" };
-
-    static boolean isIgnored(String className) {
-        for (String ignore : ignoredPackages) {
-            if (className.startsWith(ignore))
-                return true;
-        }
-        return false;
-    }
-
-    String TESTCLASS = "cca";
 
     public void run() throws IOException {
         if (srgs == null)
             throw new IllegalStateException("Missing Srg Mapper srgs");
-        if (output == null)
+        if (srgs.size() < 2)
+            throw new IllegalStateException("Required at least 2 srgs");
+        if (outputPath == null)
             throw new IllegalStateException("Missing Srg Mapper output");
 
         log("\nBuild informations:");
@@ -79,16 +56,10 @@ public class SrgMapper extends ConfLogger<SrgMapper>
         }
         log("\n");
 
-        BiPredicate<IMethod, IMethod> matchingMethod = (m1, m2) -> (m1 != null && m2 != null
-            && m1.getOriginal().equals(m2.getOriginal()) && m1.getDescriptor().equals(m2.getDescriptor()));
-
-        BiPredicate<IField, IField> matchingField = (f1,
-            f2) -> (f1 != null && f2 != null && f1.getOriginal().equals(f2.getOriginal()));
-
         this.outputSrg = new MappingFile();
 
         MappingFile base = (MappingFile)srgs.get(0);
-        //base.reverse();
+        // base.reverse();
 
         for (int n = 1; n < srgs.size(); n++) {
             MappingFile source = (MappingFile)srgs.get(n);
@@ -102,7 +73,7 @@ public class SrgMapper extends ConfLogger<SrgMapper>
                     log("Added Class " + processedClass);
                 } else {
                     String remapped = base.remapClass(sourceClass.getOriginal());
-                    if(remapped != null) {
+                    if (remapped != null) {
                         processedClass = this.outputSrg.addClass(remapped, sourceClass.getMapped());
                         log("Added remapped Class " + processedClass);
                     } else {
@@ -119,7 +90,7 @@ public class SrgMapper extends ConfLogger<SrgMapper>
 
                         // Find field in base mapping
                         Optional<? extends Method> search = baseClass.getMethods().stream()
-                            .filter(m -> matchingMethod.test(m, sourceMethod)).findFirst();
+                            .filter(m -> MATCHING_METHOD.test(m, sourceMethod)).findFirst();
                         if (search.isPresent()) {
                             baseMethod = search.get();
                         }
@@ -137,12 +108,8 @@ public class SrgMapper extends ConfLogger<SrgMapper>
                             processedClass.addMethod(original, mappedDesc, mapped);
                             log("Mapped method " + baseMethod + " to " + sourceMethod);
                             continue;
-                        } else {
-                            //error("Base doesnt have method " + sourceMethod);
                         }
                     }
-
-                    //error("Cannot resolve method " + sourceMethod);
 
                     // Put method mapping from source
                     processedClass.addMethod(sourceMethod.getOriginal(),
@@ -157,7 +124,7 @@ public class SrgMapper extends ConfLogger<SrgMapper>
 
                         // Find field in base mapping
                         Optional<? extends Field> s = baseClass.getFields().stream()
-                            .filter(f -> matchingField.test(f, sourceField)).findFirst();
+                            .filter(f -> MATCHING_FIELD.test(f, sourceField)).findFirst();
                         if (s.isPresent()) {
                             baseField = s.get();
                         }
@@ -167,12 +134,8 @@ public class SrgMapper extends ConfLogger<SrgMapper>
                                 baseField.getMappedDescriptor());
                             log("Mapped field " + baseField + " to " + sourceField);
                             continue;
-                        } else {
-                            //error("Base doesnt have field " + sourceField);
                         }
                     }
-
-                    //error("Cannot resolve field " + sourceField);
 
                     // Put field mapping from source
                     processedClass.addField(sourceField.getOriginal(), sourceField.getMapped(),
@@ -181,47 +144,8 @@ public class SrgMapper extends ConfLogger<SrgMapper>
             }
         }
 
-        this.outputSrg.write(this.output, Format.TSRG, false);
+        this.outputSrg.write(this.outputPath, Format.TSRG, false);
 
         log("Srg mapping done!");
-    }
-}
-
-class Progress
-{
-
-    private int overall = 0;
-    private int succeed = 0;
-    private int failed = 0;
-
-    public Progress() {
-    }
-
-    int getOverallAmount() {
-        return overall;
-    }
-
-    int getSucceedAmount() {
-        return succeed;
-    }
-
-    int success() {
-        overall++;
-        return ++succeed;
-    }
-
-    int getFailedAmount() {
-        return failed;
-    }
-
-    int failed() {
-        overall++;
-        return ++failed;
-    }
-
-    void resetProgress() {
-        overall = 0;
-        succeed = 0;
-        failed = 0;
     }
 }
