@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.minecraftplus</groupId>
 	<artifactId>srgprocessor</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>SrgProcessor</name>
 
 	<properties>
@@ -26,6 +26,7 @@
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
 			<version>3.0.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -47,6 +48,42 @@
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultEntries>false</addDefaultEntries>
+						</manifest>
+						<manifestEntries>
+							<Main-Class>net.minecraftforge.ConsoleTool</Main-Class>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.3</version>
+
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+
+						<configuration>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<createSourcesJar>false</createSourcesJar>
+							<outputFile>${project.build.directory}\${project.artifactId}.jar</outputFile>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
