@@ -80,7 +80,7 @@
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<createSourcesJar>false</createSourcesJar>
-							<outputFile>${project.build.directory}\${project.artifactId}.jar</outputFile>
+							<shadedArtifactAttached>false</shadedArtifactAttached>
 						</configuration>
 					</execution>
 				</executions>
