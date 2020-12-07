@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.function.BiPredicate;
 import net.minecraftforge.srg2source.util.io.ConfLogger;
 import net.minecraftforge.srgutils.IMappingFile.Format;
@@ -30,6 +29,7 @@ public class SrgMapper extends ConfLogger<SrgMapper>
     private MappingFile outputSrg;
 
     private boolean fillMissing = true;
+    private boolean filterSame = true;
 
     public void readSrg(Path srg) {
         try (InputStream in = Files.newInputStream(srg)) {
@@ -88,69 +88,71 @@ public class SrgMapper extends ConfLogger<SrgMapper>
                 }
 
                 // Add class to out mapping
-                Cls processedClass = this.outputSrg.addClass(baseClass.getMapped(),  sourceClass.getMapped());
+                Cls processedClass = this.outputSrg.addClass(baseClass.getMapped(), sourceClass.getMapped());
                 log("Mapped classes:");
                 log(" from: " + baseClass);
                 log("   to: " + sourceClass);
 
                 for (Method sourceMethod : sourceClass.getMethods()) {
 
-                    if (baseClass != null) {
+                    // Find method in base mapping
+                    Optional<? extends Method> optional = baseClass.getMethods().stream()
+                        .filter(m -> MATCHING_METHOD.test(m, sourceMethod)).findFirst();
+                    if (optional.isPresent()) {
+                        Method baseMethod = optional.get();
 
-                        Method baseMethod = null;
+                        String original = baseMethod.getMapped();
+                        String originalDesc = baseMethod.getDescriptor();
+                        String originalMappedDesc = baseMethod.getMappedDescriptor();
 
-                        // Find field in base mapping
-                        Optional<? extends Method> search = baseClass.getMethods().stream()
-                            .filter(m -> MATCHING_METHOD.test(m, sourceMethod)).findFirst();
-                        if (search.isPresent()) {
-                            baseMethod = search.get();
+                        String mapped = sourceMethod.getMapped();
+                        String mappedDesc = sourceMethod.getDescriptor();
+
+                        if (originalMappedDesc == null || originalMappedDesc.isEmpty()) {
+                            throw new IllegalStateException(
+                                "Null or empty mapped description in method: \n" + baseMethod);
+                        }
+                        if (!originalDesc.equals(mappedDesc)) {
+                            throw new IllegalStateException(
+                                "Not equal description in methods: \n" + baseMethod + "\n" + sourceMethod);
                         }
 
-                        if (baseMethod != null) {
-                            String original = baseMethod.getMapped();
-                            String desc = baseMethod.getDescriptor();
-                            String mappedDesc = baseMethod.getMappedDescriptor();
-                            String mapped = sourceMethod.getMapped();
-
-                            if (mappedDesc == null || mappedDesc == sourceMethod.getDescriptor()) {
-                                throw new IllegalStateException("Null desc!");
-                            }
-
-                            processedClass.addMethod(original, mappedDesc, mapped);
-                            log("Mapped method " + baseMethod + " to " + sourceMethod);
-                            continue;
+                        if (this.mapMethod(processedClass, original, originalMappedDesc, mapped)) {
+                            log("Mapped methods:");
+                            log(" from: " + baseMethod);
+                            log("   to: " + sourceMethod);
+                        }
+                    } else if (this.fillMissing) { // Put method mapping from source
+                        if (this.mapMethod(processedClass, sourceMethod.getOriginal(),
+                            base.remapDescriptor(sourceMethod.getDescriptor()), sourceMethod.getMapped())) {
+                            log("Filled with method from source mapping:");
+                            log("       " + sourceMethod);
                         }
                     }
-
-                    // Put method mapping from source
-                    processedClass.addMethod(sourceMethod.getOriginal(),
-                        base.remapDescriptor(sourceMethod.getDescriptor()), sourceMethod.getMapped());
                 }
 
                 for (Field sourceField : sourceClass.getFields()) {
 
-                    if (baseClass != null) {
+                    // Find field in base mapping
+                    Optional<? extends Field> optional = baseClass.getFields().stream()
+                        .filter(f -> MATCHING_FIELD.test(f, sourceField)).findFirst();
 
-                        Field baseField = null;
+                    if (optional.isPresent()) {
+                        Field baseField = optional.get();
 
-                        // Find field in base mapping
-                        Optional<? extends Field> s = baseClass.getFields().stream()
-                            .filter(f -> MATCHING_FIELD.test(f, sourceField)).findFirst();
-                        if (s.isPresent()) {
-                            baseField = s.get();
+                        if (this.mapField(processedClass, baseField.getMapped(), sourceField.getMapped(),
+                            baseField.getMappedDescriptor())) {
+                            log("Mapped fields:");
+                            log(" from: " + baseField);
+                            log("   to: " + sourceField);
                         }
-
-                        if (baseField != null) {
-                            processedClass.addField(baseField.getMapped(), sourceField.getMapped(),
-                                baseField.getMappedDescriptor());
-                            log("Mapped field " + baseField + " to " + sourceField);
-                            continue;
+                    } else if (this.fillMissing) { // Put field mapping from source
+                        if (this.mapField(processedClass, sourceField.getOriginal(), sourceField.getMapped(),
+                            sourceField.getDescriptor())) {
+                            log("Filled with field from source mapping:");
+                            log("       " + sourceField);
                         }
                     }
-
-                    // Put field mapping from source
-                    processedClass.addField(sourceField.getOriginal(), sourceField.getMapped(),
-                        sourceField.getDescriptor());
                 }
             }
         }
@@ -159,4 +161,23 @@ public class SrgMapper extends ConfLogger<SrgMapper>
 
         log("Srg mapping done!");
     }
+
+    private boolean mapMethod(Cls clazz, String original, String descriptor, String mapped) {
+        // Filter same values when filterSame flag enabled
+        if (this.filterSame && original.equals(mapped))
+            return false;
+
+        clazz.addMethod(original, descriptor, mapped);
+        return true;
+    }
+
+    private boolean mapField(Cls clazz, String original, String mapped, String descriptor) {
+        // Filter same values when filterSame flag enabled
+        if (this.filterSame && original.equals(mapped))
+            return false;
+
+        clazz.addField(original, mapped, descriptor);
+        return true;
+    }
+
 }
