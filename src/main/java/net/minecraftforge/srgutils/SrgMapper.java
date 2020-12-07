@@ -28,8 +28,8 @@ public class SrgMapper extends ConfLogger<SrgMapper>
     private Path outputPath = null;
     private MappingFile outputSrg;
 
-    private boolean fillMissing = true;
-    private boolean filterSame = true;
+    private boolean fillMissing = false;
+    private boolean filterSame = false;
 
     public void readSrg(Path srg) {
         try (InputStream in = Files.newInputStream(srg)) {
@@ -42,6 +42,14 @@ public class SrgMapper extends ConfLogger<SrgMapper>
 
     public void setOutput(Path output) {
         this.outputPath = output;
+    }
+
+    public void fillMissing(boolean value) {
+        this.fillMissing = value;
+    }
+
+    public void filterSameNames(boolean value) {
+        this.filterSame = value;
     }
 
     public void run() throws IOException {

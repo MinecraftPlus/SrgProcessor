@@ -14,6 +14,8 @@ public class SrgMapperBuilder
 
     private List<Consumer<SrgMapper>> srgs = new ArrayList<>();
     private Path output = null;
+    private boolean fillMissing = false;
+    private boolean filterSameNames = false;
 
     public SrgMapperBuilder logger(PrintStream value) {
         this.logStd = value;
@@ -35,6 +37,16 @@ public class SrgMapperBuilder
         return this;
     }
 
+    public SrgMapperBuilder fillMissing() {
+        this.fillMissing = true;
+        return this;
+    }
+
+    public SrgMapperBuilder filterSameNames() {
+        this.filterSameNames = true;
+        return this;
+    }
+
     public SrgMapper build() {
         if (srgs.size() == 0)
             throw new IllegalArgumentException("Builder State Exception: Missing Srgs");
@@ -44,6 +56,8 @@ public class SrgMapperBuilder
         SrgMapper mapper = new SrgMapper().setLogger(logStd).setErrorLogger(logErr);
 
         mapper.setOutput(output);
+        mapper.fillMissing(fillMissing);
+        mapper.filterSameNames(filterSameNames);
 
         srgs.forEach(e -> e.accept(mapper));
 

@@ -22,6 +22,10 @@ public class SrgMapMain
             .withValuesConvertedBy(PATH_CONVERTER).required();
         OptionSpec<Path> outArg = parser.acceptsAll(Arrays.asList("out", "output", "outDir")).withRequiredArg()
             .withValuesConvertedBy(PATH_CONVERTER).required();
+        OptionSpec<Boolean> fillArg = parser.acceptsAll(Arrays.asList("fill", "fillMissing")).withOptionalArg()
+            .ofType(Boolean.class).defaultsTo(false);
+        OptionSpec<Boolean> filterArg = parser.acceptsAll(Arrays.asList("filter", "filterSame")).withOptionalArg()
+            .ofType(Boolean.class).defaultsTo(false);
 
         try {
             OptionSet options = parser.parse(args);
@@ -32,6 +36,8 @@ public class SrgMapMain
             }
 
             Path output = options.valueOf(outArg);
+            boolean fillMissing = options.has(fillArg) && options.valueOf(fillArg);
+            boolean filterSameNames = options.has(filterArg) && options.valueOf(filterArg);
 
             SrgMapperBuilder builder = new SrgMapperBuilder().output(output);
 
@@ -43,6 +49,14 @@ public class SrgMapMain
             }
 
             System.out.println("Output:  " + output);
+            System.out.println("Missing: " + fillMissing);
+            System.out.println("Filter:  " + filterSameNames);
+
+            if (fillMissing)
+                builder.fillMissing();
+
+            if (filterSameNames)
+                builder.filterSameNames();
 
             builder.build().run();
         } catch (OptionException e) {
