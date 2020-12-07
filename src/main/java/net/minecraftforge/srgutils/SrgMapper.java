@@ -29,6 +29,8 @@ public class SrgMapper extends ConfLogger<SrgMapper>
     private Path outputPath = null;
     private MappingFile outputSrg;
 
+    private boolean fillMissing = true;
+
     public void readSrg(Path srg) {
         try (InputStream in = Files.newInputStream(srg)) {
             IMappingFile map = IMappingFile.load(in);
@@ -65,22 +67,31 @@ public class SrgMapper extends ConfLogger<SrgMapper>
             MappingFile source = (MappingFile)srgs.get(n);
 
             for (Cls sourceClass : source.getClasses()) {
-                Cls baseClass = base.getClass(sourceClass.getOriginal());
 
-                Cls processedClass;
-                if (baseClass != null) {
-                    processedClass = this.outputSrg.addClass(baseClass.getMapped(), sourceClass.getMapped());
-                    log("Added Class " + processedClass);
-                } else {
-                    String remapped = base.remapClass(sourceClass.getOriginal());
-                    if (remapped != null) {
-                        processedClass = this.outputSrg.addClass(remapped, sourceClass.getMapped());
-                        log("Added remapped Class " + processedClass);
-                    } else {
-                        error("Cannot resolve class " + sourceClass.getOriginal());
-                        processedClass = this.outputSrg.addClass(sourceClass.getOriginal(), sourceClass.getMapped());
+                Cls baseClass = base.getClass(sourceClass.getOriginal());
+                if (baseClass == null) { // Try to recover class if missing
+                    String original = sourceClass.getOriginal();
+                    String remapped = base.remapClass(original);
+
+                    // Recover only if name differs or fillMising flag is true
+                    if (!original.equals(remapped) || this.fillMissing) {
+                        baseClass = base.addClass(original, remapped);
+                        log(" Recovered base class from: '" + original + " : " + remapped + "'");
+                        log("  result: " + baseClass);
+                    } else { // Otherwise abort
+                        log("Aborted class recovering:");
+                        log(" sourceClass: " + sourceClass);
+                        log("    original: " + original);
+                        log("    remapped: " + remapped);
+                        continue;
                     }
                 }
+
+                // Add class to out mapping
+                Cls processedClass = this.outputSrg.addClass(baseClass.getMapped(),  sourceClass.getMapped());
+                log("Mapped classes:");
+                log(" from: " + baseClass);
+                log("   to: " + sourceClass);
 
                 for (Method sourceMethod : sourceClass.getMethods()) {
 
