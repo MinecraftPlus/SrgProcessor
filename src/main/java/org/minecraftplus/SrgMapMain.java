@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import org.minecraftplus.api.SrgMapperBuilder;
+import org.minecraftplus.srgprocessor.SrgWorker.Mode;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.ValueConverter;
 import joptsimple.util.PathConverter;
+import net.minecraftforge.srgutils.IMappingFile.Format;
 
 public class SrgMapMain
 {
@@ -18,13 +20,18 @@ public class SrgMapMain
     public static void main(String[] args) throws IOException {
         OptionParser parser = new OptionParser();
         OptionSpec<?> helpArg = parser.acceptsAll(Arrays.asList("h", "help")).forHelp();
+
+        OptionSpec<Mode> modeArg = parser.acceptsAll(Arrays.asList("mode", "jobMode")).withRequiredArg()
+            .ofType(Mode.class).required();
         OptionSpec<Path> srgArg = parser.acceptsAll(Arrays.asList("srg", "map", "srgFiles")).withRequiredArg()
             .withValuesConvertedBy(PATH_CONVERTER).required();
         OptionSpec<Path> outArg = parser.acceptsAll(Arrays.asList("out", "output", "outDir")).withRequiredArg()
             .withValuesConvertedBy(PATH_CONVERTER).required();
-        OptionSpec<Boolean> fillArg = parser.acceptsAll(Arrays.asList("fill", "fillMissing")).withOptionalArg()
-            .ofType(Boolean.class).defaultsTo(false);
+        OptionSpec<Format> formatArg = parser.acceptsAll(Arrays.asList("format", "outputFormat")).withRequiredArg()
+            .ofType(Format.class).defaultsTo(Format.TSRG2);
         OptionSpec<Boolean> filterArg = parser.acceptsAll(Arrays.asList("filter", "filterSame")).withOptionalArg()
+            .ofType(Boolean.class).defaultsTo(false);
+        OptionSpec<Boolean> reverseArg = parser.acceptsAll(Arrays.asList("reverse", "reverseOutput")).withOptionalArg()
             .ofType(Boolean.class).defaultsTo(false);
 
         try {
@@ -35,11 +42,15 @@ public class SrgMapMain
                 return;
             }
 
+            Mode jobMode = options.valueOf(modeArg);
             Path output = options.valueOf(outArg);
-            boolean fillMissing = options.has(fillArg) && options.valueOf(fillArg);
-            boolean filterSameNames = options.has(filterArg) && options.valueOf(filterArg);
+            Format outputFormat = options.valueOf(formatArg);
+            boolean filterSameNames = options.has(filterArg) || options.valueOf(filterArg);
+            boolean reverseOutput = options.has(reverseArg) || options.valueOf(reverseArg);
 
-            SrgMapperBuilder builder = new SrgMapperBuilder().output(output);
+            SrgMapperBuilder builder = new SrgMapperBuilder().mode(jobMode).output(output).format(outputFormat);
+
+            System.out.println("Mode:     " + jobMode);
 
             if (options.has(srgArg)) {
                 options.valuesOf(srgArg).forEach(v -> {
@@ -49,17 +60,17 @@ public class SrgMapMain
             }
 
             System.out.println("Output:  " + output);
-            System.out.println("Missing: " + fillMissing);
+            System.out.println("Output format:  " + outputFormat);
             System.out.println("Filter:  " + filterSameNames);
+            System.out.println("Reverse output:  " + reverseOutput);
 
-            if (fillMissing)
-                builder.fillMissing();
-
-            if (filterSameNames)
-                builder.filterSameNames();
+            if (reverseOutput)
+                builder.reverseOutput();
 
             builder.build().run();
-        } catch (OptionException e) {
+        } catch (
+
+        OptionException e) {
             parser.printHelpOn(System.out);
             e.printStackTrace();
         }

@@ -5,7 +5,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import net.minecraftforge.srgutils.SrgMapper;
+import net.minecraftforge.srgutils.IMappingFile.Format;
+import org.minecraftplus.srgprocessor.SrgMapper;
+import org.minecraftplus.srgprocessor.SrgWorker.Mode;
 
 public class SrgMapperBuilder
 {
@@ -13,9 +15,10 @@ public class SrgMapperBuilder
     private PrintStream logErr = System.err;
 
     private List<Consumer<SrgMapper>> srgs = new ArrayList<>();
+    private Mode mode = Mode.RENAME;
+    private Format format = Format.TSRG2;
     private Path output = null;
-    private boolean fillMissing = false;
-    private boolean filterSameNames = false;
+    private boolean reverseOutput = false;
 
     public SrgMapperBuilder logger(PrintStream value) {
         this.logStd = value;
@@ -33,17 +36,26 @@ public class SrgMapperBuilder
     }
 
     public SrgMapperBuilder output(Path value) {
-        this.output = value;
+        if (value.getName(value.getNameCount()-1).toString().indexOf('.') > 0) {
+            this.output = value;
+        } else {
+            this.output = value.resolveSibling(value.getName(value.getNameCount()-1) + "." + format.toString().toLowerCase());
+        }
         return this;
     }
 
-    public SrgMapperBuilder fillMissing() {
-        this.fillMissing = true;
+    public SrgMapperBuilder format(Format value) {
+        this.format = value;
         return this;
     }
 
-    public SrgMapperBuilder filterSameNames() {
-        this.filterSameNames = true;
+    public SrgMapperBuilder reverseOutput() {
+        this.reverseOutput = true;
+        return this;
+    }
+
+    public SrgMapperBuilder mode(Mode value) {
+        this.mode = value;
         return this;
     }
 
@@ -55,9 +67,10 @@ public class SrgMapperBuilder
 
         SrgMapper mapper = new SrgMapper().setLogger(logStd).setErrorLogger(logErr);
 
-        mapper.setOutput(output);
-        mapper.fillMissing(fillMissing);
-        mapper.filterSameNames(filterSameNames);
+        mapper.mode(mode);
+        mapper.output(output);
+        mapper.outputFormat(format);
+        mapper.reverseOutput(reverseOutput);
 
         srgs.forEach(e -> e.accept(mapper));
 
