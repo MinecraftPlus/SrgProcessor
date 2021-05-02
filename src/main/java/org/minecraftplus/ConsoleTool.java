@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge;
+package org.minecraftplus;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.minecraftplus.SrgCleanMain;
-import org.minecraftplus.SrgMapMain;
 
 public class ConsoleTool
 {

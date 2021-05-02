@@ -30,7 +30,9 @@ public class SrgCleanMain
         OptionSpec<Path> outArg = parser.acceptsAll(Arrays.asList("out", "output", "outFile")).withRequiredArg()
             .withValuesConvertedBy(PATH_CONVERTER).required();
         OptionSpec<Format> formatArg = parser.acceptsAll(Arrays.asList("f", "format")).withRequiredArg()
-            .withValuesConvertedBy(FORMAT_CONVERTER).defaultsTo(Format.TSRG);
+            .withValuesConvertedBy(FORMAT_CONVERTER).defaultsTo(Format.TSRG2);
+        OptionSpec<Boolean> reverseArg = parser.acceptsAll(Arrays.asList("r", "reverse")).withOptionalArg()
+            .ofType(Boolean.class).defaultsTo(false);
 
         try {
             OptionSet options = parser.parse(args);
@@ -43,13 +45,19 @@ public class SrgCleanMain
             Path input = options.valueOf(inArg);
             Path output = options.valueOf(outArg);
             Format format = options.valueOf(formatArg);
+            boolean reverse = options.valueOf(reverseArg);
 
             System.out.println("Input :  " + input);
             System.out.println("Output:  " + output);
             System.out.println("Format:  " + format);
+            System.out.println("Reverse:  " + reverse);
 
+            System.out.println("Reading input SRG...");
             readSrg(input);
-            writeSrg(output, format, false);
+            System.out.println("Writing out SRG...");
+            writeSrg(output, format, reverse);
+
+            System.out.println("Done!");
 
         } catch (OptionException e) {
             parser.printHelpOn(System.out);
@@ -82,9 +90,8 @@ public class SrgCleanMain
 
         @Override
         public String valuePattern() {
-            return "/(?:srg|xsrg|csrg|tsrg|pg)/";
+            return "/(?:srg|xsrg|csrg|tsrg|tsrg2|pg|tiny1|tiny)/";
         }
-
     }
 
     public static void readSrg(Path path) {
