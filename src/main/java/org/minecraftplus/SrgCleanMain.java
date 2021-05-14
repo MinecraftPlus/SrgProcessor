@@ -33,6 +33,9 @@ public class SrgCleanMain
             .withValuesConvertedBy(FORMAT_CONVERTER).defaultsTo(Format.TSRG2);
         OptionSpec<Boolean> reverseArg = parser.acceptsAll(Arrays.asList("r", "reverse")).withOptionalArg()
             .ofType(Boolean.class).defaultsTo(false);
+        OptionSpec<Boolean> filterArg = parser.acceptsAll(Arrays.asList("filter")).withOptionalArg()
+            .ofType(Boolean.class).defaultsTo(false);
+        
 
         try {
             OptionSet options = parser.parse(args);
@@ -45,15 +48,23 @@ public class SrgCleanMain
             Path input = options.valueOf(inArg);
             Path output = options.valueOf(outArg);
             Format format = options.valueOf(formatArg);
-            boolean reverse = options.valueOf(reverseArg);
+            boolean reverse = options.has(reverseArg) || options.valueOf(reverseArg);
+            boolean filter = options.has(filterArg) || options.valueOf(filterArg);
 
             System.out.println("Input :  " + input);
             System.out.println("Output:  " + output);
             System.out.println("Format:  " + format);
-            System.out.println("Reverse:  " + reverse);
+            System.out.println("Reverse: " + reverse);
+            System.out.println("Filter:  " + filter);
 
             System.out.println("Reading input SRG...");
             readSrg(input);
+            
+            if (filter) {
+                System.out.println("Filtering...");
+                srg = srg.filter();
+            }
+            
             System.out.println("Writing out SRG...");
             writeSrg(output, format, reverse);
 
