@@ -3,5 +3,8 @@
 /.project
 /.settings
 
+# Idea
+/.idea
+
 # Maven
 /target
