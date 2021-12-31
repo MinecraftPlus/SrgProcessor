@@ -14,7 +14,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>net.minecraftforge</groupId>
+			<groupId>org.minecraftplus</groupId>
 			<artifactId>srgutils</artifactId>
 			<version>[0.4,)</version>
 		</dependency>
