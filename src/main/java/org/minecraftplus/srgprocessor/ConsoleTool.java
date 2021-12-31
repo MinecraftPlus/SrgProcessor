@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.minecraftplus;
+package org.minecraftplus.srgprocessor;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

@@ -1,10 +1,10 @@
-package org.minecraftplus;
+package org.minecraftplus.srgprocessor;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import org.minecraftplus.api.SrgMapperBuilder;
-import org.minecraftplus.srgprocessor.SrgWorker.Mode;
+import org.minecraftplus.srgprocessor.api.SrgMapperBuilder;
+import org.minecraftplus.srgprocessor.tasks.SrgWorker.Mode;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;

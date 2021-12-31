@@ -1,4 +1,4 @@
-package org.minecraftplus;
+package org.minecraftplus.srgprocessor;
 
 import java.io.IOException;
 import java.io.InputStream;

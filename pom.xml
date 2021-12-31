@@ -61,7 +61,7 @@
 							<addDefaultEntries>false</addDefaultEntries>
 						</manifest>
 						<manifestEntries>
-							<Main-Class>net.minecraftforge.ConsoleTool</Main-Class>
+							<Main-Class>org.minecraftplus.srgprocessor.ConsoleTool</Main-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>
