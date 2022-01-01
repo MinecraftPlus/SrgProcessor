@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import org.minecraftplus.srgprocessor.api.SrgMapperBuilder;
-import org.minecraftplus.srgprocessor.tasks.SrgWorker.Mode;
+import org.minecraftplus.srgprocessor.tasks.SrgMapper.Mode;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;

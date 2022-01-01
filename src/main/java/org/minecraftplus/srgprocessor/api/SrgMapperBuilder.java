@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import net.minecraftforge.srgutils.IMappingFile.Format;
 import org.minecraftplus.srgprocessor.tasks.SrgMapper;
-import org.minecraftplus.srgprocessor.tasks.SrgWorker.Mode;
+import org.minecraftplus.srgprocessor.tasks.SrgMapper.Mode;
 
 public class SrgMapperBuilder
 {
