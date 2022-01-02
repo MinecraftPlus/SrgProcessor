@@ -4,18 +4,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.minecraftplus</groupId>
 	<artifactId>srgprocessor</artifactId>
-	<version>0.1.0</version>
+	<version>1.0.0</version>
 	<name>SrgProcessor</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>8</java.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>net.minecraftforge</groupId>
+			<groupId>org.minecraftplus</groupId>
 			<artifactId>srgutils</artifactId>
-			<version>[0.4,)</version>
+			<version>0.4.29</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
@@ -33,7 +34,7 @@
 	<repositories>
 		<repository>
 			<id>forge</id>
-			<url>http://files.minecraftforge.net/maven</url>
+			<url>https://maven.minecraftforge.net</url>
 		</repository>
 	</repositories>
 
@@ -45,8 +46,8 @@
 				<version>3.8.0</version>
 
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -60,7 +61,7 @@
 							<addDefaultEntries>false</addDefaultEntries>
 						</manifest>
 						<manifestEntries>
-							<Main-Class>net.minecraftforge.ConsoleTool</Main-Class>
+							<Main-Class>org.minecraftplus.srgprocessor.ConsoleTool</Main-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>

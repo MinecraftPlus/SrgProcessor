@@ -1,4 +1,4 @@
-package org.minecraftplus.srgprocessor;
+package org.minecraftplus.srgprocessor.tasks;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,16 +65,5 @@ public abstract class SrgWorker<T extends ConfLogger<T>> extends ConfLogger<T>
         this.outputSrg.write(outputPath, outputFormat, reverseOutput);
     }
 
-    public enum Mode
-    {
-        RENAME("Generate mapping from base original to source mapped"),
-        CHAIN("Generate mapping from base mapped to source mapped"),
-        FILL("Generate mapping of base filled with missing source entries");
-
-        String desc;
-
-        Mode(String desc) {
-            this.desc = desc;
-        }
-    }
+    public interface Mode {}
 }

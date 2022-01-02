@@ -1,8 +1,10 @@
-package org.minecraftplus.srgprocessor;
+package org.minecraftplus.srgprocessor.tasks;
 
 import java.io.IOException;
 import net.minecraftforge.srgutils.CompleteRenamer;
 import net.minecraftforge.srgutils.IMappingFile;
+import net.minecraftforge.srgutils.IMappingFile.IClass;
+import net.minecraftforge.srgutils.IRenamer;
 
 public class SrgMapper extends SrgWorker<SrgMapper>
 {
@@ -24,10 +26,21 @@ public class SrgMapper extends SrgWorker<SrgMapper>
         IMappingFile base = srgs.get(0);
         IMappingFile source = srgs.get(1);
 
-        switch (mode) {
+        switch ((Mode)mode) {
         case RENAME: {
-            log("Rename mode!");
+            log("Rename ALL mode!");
             this.outputSrg = base.rename(new CompleteRenamer(source));
+            break;
+        }
+        case RENAME_CLASSES: {
+            log("Rename CLASSES mode!");
+            this.outputSrg = base.rename(new IRenamer() {
+                @Override
+                public String rename(IClass value) {
+                    IClass cls = source.getClass(value.getOriginal());
+                    return cls == null ? value.getMapped() : cls.getMapped();
+                }
+            });
             break;
         }
         case CHAIN: {
@@ -49,5 +62,20 @@ public class SrgMapper extends SrgWorker<SrgMapper>
         write();
 
         log("Srg mapping done!\n");
+    }
+
+    public enum Mode implements SrgWorker.Mode
+    {
+        RENAME("Generate mapping from base original to source mapped"),
+        RENAME_CLASSES("Generate mapping from base original to source mapped only for classes"),
+        CHAIN("Generate mapping from base mapped to source mapped"),
+        FILL("Generate mapping of base filled with missing source entries"),
+        GENERATE_PARAM("Generate method parameters names from parameter type");
+
+        String desc;
+
+        Mode(String desc) {
+            this.desc = desc;
+        }
     }
 }
