@@ -30,6 +30,14 @@ public abstract class ConfLogger<T extends ConfLogger> {
         logger.println(s);
     }
 
+    protected void logN(String s) {
+        logger.println(s + "\n");
+    }
+
+    protected void Nlog(String s) {
+        logger.println("\n" + s);
+    }
+
     public void error(String s) {
         errorLogger.println(s);
     }
