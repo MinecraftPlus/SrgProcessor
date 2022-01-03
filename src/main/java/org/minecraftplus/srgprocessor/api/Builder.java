@@ -1,7 +1,6 @@
 package org.minecraftplus.srgprocessor.api;
 
 import net.minecraftforge.srgutils.IMappingFile;
-import org.minecraftplus.srgprocessor.tasks.Deducer;
 import org.minecraftplus.srgprocessor.tasks.SrgWorker;
 
 import java.io.PrintStream;
@@ -15,6 +14,7 @@ public abstract class Builder<T extends Builder, U extends SrgWorker> {
     PrintStream logStd = System.out;
     PrintStream logErr = System.err;
 
+    protected boolean dryRun = false;
     protected List<Consumer<U>> inputs = new ArrayList<>();
     protected Path output = null;
     protected IMappingFile.Format format = IMappingFile.Format.TSRG2;
@@ -27,6 +27,11 @@ public abstract class Builder<T extends Builder, U extends SrgWorker> {
 
     public T errorLogger(PrintStream value) {
         this.logErr = value;
+        return (T) this;
+    }
+
+    public T dryRun() {
+        this.dryRun = true;
         return (T) this;
     }
 
@@ -64,6 +69,7 @@ public abstract class Builder<T extends Builder, U extends SrgWorker> {
 
         inputs.forEach(e -> e.accept(worker));
 
+        worker.dryRun(dryRun);
         worker.output(output);
         worker.outputFormat(format);
         worker.reverseOutput(reverseOutput);

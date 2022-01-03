@@ -86,8 +86,12 @@ public class Deducer extends SrgWorker<Deducer>
 
         this.outputSrg = this.outputSrg.filter(); // TODO DELETE THIS, ONLY FOR DEBBUGING!
 
-        Nlog("Writing to output...");
-        write();
+        if (!this.dryRun) {
+            Nlog("Writing to output...");
+            write();
+        } else {
+            Nlog("No output, dry run used!");
+        }
 
         logN("Deducing done!");
 

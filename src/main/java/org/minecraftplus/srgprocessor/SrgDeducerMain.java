@@ -17,6 +17,8 @@ public class SrgDeducerMain
         OptionParser parser = new OptionParser();
         OptionSpec<?> helpArg = parser.acceptsAll(Arrays.asList("h", "help")).forHelp();
 
+        OptionSpec<Boolean> dryRunArg = parser.acceptsAll(Arrays.asList("dry", "dryRun")).withOptionalArg()
+                .ofType(Boolean.class).defaultsTo(false);
         OptionSpec<Path> srgArg = parser.acceptsAll(Arrays.asList("srg", "map", "mapping", "mappingFile")).withRequiredArg()
             .withValuesConvertedBy(PATH_CONVERTER).required();
         OptionSpec<Path> dictArg = parser.acceptsAll(Arrays.asList("dict", "dictionary", "dictionaryFiles")).withRequiredArg()
@@ -36,12 +38,14 @@ public class SrgDeducerMain
                 return;
             }
 
+            boolean dryRun = options.has(dryRunArg) || options.valueOf(dryRunArg);
             Path input = options.valueOf(srgArg);
             Path output = options.valueOf(outArg);
             Path dictionary = options.valueOf(dictArg);
             Format outputFormat = options.valueOf(formatArg);
             boolean reverseOutput = options.has(reverseArg) || options.valueOf(reverseArg);
 
+            System.out.println("Dry run:         " + dryRun);
             System.out.println("Input:           " + input);
             System.out.println("Dictionary:      " + dictionary);
             System.out.println("Output:          " + output);
@@ -50,6 +54,9 @@ public class SrgDeducerMain
 
             DeducerBuilder builder = new DeducerBuilder()
                     .input(input).dictionary(dictionary).output(output).format(outputFormat);
+
+            if (dryRun)
+                builder.dryRun();
 
             if (reverseOutput)
                 builder.reverseOutput();
