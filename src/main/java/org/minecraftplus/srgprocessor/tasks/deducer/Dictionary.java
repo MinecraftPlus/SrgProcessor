@@ -1,23 +1,19 @@
 package org.minecraftplus.srgprocessor.tasks.deducer;
 
-import net.minecraftforge.srgutils.IMappingFile;
-import org.minecraftplus.srgprocessor.Utils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Dictionary {
 
-    private final Map<Pattern, String> rules = new LinkedHashMap<>();
+    private final Map<Pattern, Action> rules = new LinkedHashMap<>();
 
-    public Map<Pattern, String> getRules() {
+    public Map<Pattern, Action> getRules() {
         return rules;
     }
 
@@ -32,7 +28,7 @@ public class Dictionary {
             if (pts.length > 2)
                 throw new IOException("Invalid dictionary line, too many parts: " + line);
 
-            rules.put(Pattern.compile(pts[0]), pts[1]);
+            rules.put(Pattern.compile(pts[0]), new Action(pts[1]));
         }
 
         return this;
@@ -50,3 +46,4 @@ public class Dictionary {
         return end == 0 ? "" : str.substring(0, end);
     }
 }
+

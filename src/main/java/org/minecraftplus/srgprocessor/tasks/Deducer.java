@@ -3,6 +3,7 @@ package org.minecraftplus.srgprocessor.tasks;
 import net.minecraftforge.srgutils.IMappingFile;
 import net.minecraftforge.srgutils.IRenamer;
 import org.minecraftplus.srgprocessor.Utils;
+import org.minecraftplus.srgprocessor.tasks.deducer.Action;
 import org.minecraftplus.srgprocessor.tasks.deducer.Descriptor;
 import org.minecraftplus.srgprocessor.tasks.deducer.Dictionary;
 
@@ -110,10 +111,11 @@ public class Deducer extends SrgWorker<Deducer>
         if (parameterDescriptor.isArray())
             parameterName = "a" + parameterName;
 
-        for (Map.Entry<Pattern, String> rule : dictionary.getRules().entrySet()) {
+        for (Map.Entry<Pattern, Action> rule : dictionary.getRules().entrySet()) {
             Matcher matcher = rule.getKey().matcher(parameterName);
             while (matcher.find()) {
-                parameterName = matcher.replaceFirst(rule.getValue());
+                Action action = rule.getValue();
+                parameterName = action.act(matcher);
             }
         }
 
