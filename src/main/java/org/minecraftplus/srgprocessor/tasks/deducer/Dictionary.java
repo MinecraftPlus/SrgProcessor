@@ -12,16 +12,15 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Dictionary {
 
-    private final Map<Pattern, String> rules = new HashMap<>();
+    private final Map<Pattern, String> rules = new LinkedHashMap<>();
 
     public Dictionary load(InputStream in) throws IOException {
         List<String> lines = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines()
                 .map(Dictionary::stripComment)
-                .filter(l -> !l.isEmpty()) //Remove Empty lines
+                .filter(line -> !line.isEmpty())
                 .collect(Collectors.toList());
 
         for (String line : lines) {
@@ -39,18 +38,23 @@ public class Dictionary {
         IMappingFile.IMethod method = parameter.getParent();
         String descriptor = method.getMappedDescriptor();
 
-        String[] parTypes = Utils.splitMethodDesc(descriptor).stream()
-                .<String>map(c -> c.substring(c.lastIndexOf("/") + 1)).toArray(String[]::new);
+        List<Descriptor> descriptors = Utils.splitMethodDesc(descriptor);
+        Descriptor parameterDescriptor = descriptors.get(parameter.getIndex());
 
-        String parameterName = parTypes[parameter.getIndex()];
-        String[] typeWords = parameterName.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+        String parameterName = parameterDescriptor.name;
+        parameterName = parameterName.substring(parameterName.lastIndexOf("/") + 1);
+        parameterName = parameterName.substring(parameterName.lastIndexOf("$") + 1);
+
+        String[] parameterNameWords = Utils.splitCase(parameterName);
+
+        // Add 'a' prefix to parameters which are arrays
+        if (parameterDescriptor.array)
+            parameterName = "a" + parameterName;
 
         for (Map.Entry<Pattern, String> rule : this.rules.entrySet()) {
             Matcher matcher = rule.getKey().matcher(parameterName);
-
-            ArrayList<String> listMatches = new ArrayList<>();
             while (matcher.find()) {
-                parameterName = matcher.replaceAll(rule.getValue());
+                parameterName = matcher.replaceFirst(rule.getValue());
             }
         }
 

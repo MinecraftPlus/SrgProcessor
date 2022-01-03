@@ -49,7 +49,14 @@ public class Deducer extends SrgWorker<Deducer>
                 }
                 return ret;
             }
+
+            @Override
+            public String rename(IMappingFile.IField value) { //FOR DEBUG
+                return value.getOriginal();
+            }
         });
+
+        this.outputSrg = this.outputSrg.filter(); //FOR DEBUG
 
         Nlog("Writing to output...");
         write();
