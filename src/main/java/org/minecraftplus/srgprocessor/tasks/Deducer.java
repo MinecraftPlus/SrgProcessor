@@ -105,8 +105,6 @@ public class Deducer extends SrgWorker<Deducer>
         parameterName = parameterName.substring(parameterName.lastIndexOf("/") + 1);
         parameterName = parameterName.substring(parameterName.lastIndexOf("$") + 1);
 
-        String[] parameterNameWords = Utils.splitCase(parameterName);
-
         // Add 'a' prefix to parameters which are arrays
         if (parameterDescriptor.isArray())
             parameterName = "a" + parameterName;
