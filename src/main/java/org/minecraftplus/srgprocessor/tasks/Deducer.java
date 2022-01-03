@@ -90,9 +90,14 @@ public class Deducer extends SrgWorker<Deducer>
         write();
 
         logN("Deducing done!");
+
+        log("Statistics of patter usage:");
+        statistics.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .forEach(e -> log(String.format("  %8d | %s", e.getValue(), e.getKey())));
     }
 
     private Set<String> usedNames = new HashSet();
+    private Map<String, Integer> statistics = new HashMap();
 
     public String deduceName(IMappingFile.IParameter parameter, Dictionary dictionary) {
         IMappingFile.IMethod method = parameter.getParent();
@@ -114,6 +119,14 @@ public class Deducer extends SrgWorker<Deducer>
             while (matcher.find()) {
                 Action action = rule.getValue();
                 parameterName = action.act(matcher);
+
+                // Store usage statistics
+                String pattern = rule.getKey().pattern();
+                Integer stat = statistics.get(pattern);
+                if (stat != null) {
+                    statistics.replace(pattern, ++stat);
+                } else
+                    statistics.put(pattern, 1);
             }
         }
 
