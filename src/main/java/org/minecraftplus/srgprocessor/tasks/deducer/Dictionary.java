@@ -17,6 +17,10 @@ public class Dictionary {
 
     private final Map<Pattern, String> rules = new LinkedHashMap<>();
 
+    public Map<Pattern, String> getRules() {
+        return rules;
+    }
+
     public Dictionary load(InputStream in) throws IOException {
         List<String> lines = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines()
                 .map(Dictionary::stripComment)
@@ -32,33 +36,6 @@ public class Dictionary {
         }
 
         return this;
-    }
-
-    public String deduceName(IMappingFile.IParameter parameter) {
-        IMappingFile.IMethod method = parameter.getParent();
-        String descriptor = method.getMappedDescriptor();
-
-        List<Descriptor> descriptors = Utils.splitMethodDesc(descriptor);
-        Descriptor parameterDescriptor = descriptors.get(parameter.getIndex());
-
-        String parameterName = parameterDescriptor.name;
-        parameterName = parameterName.substring(parameterName.lastIndexOf("/") + 1);
-        parameterName = parameterName.substring(parameterName.lastIndexOf("$") + 1);
-
-        String[] parameterNameWords = Utils.splitCase(parameterName);
-
-        // Add 'a' prefix to parameters which are arrays
-        if (parameterDescriptor.array)
-            parameterName = "a" + parameterName;
-
-        for (Map.Entry<Pattern, String> rule : this.rules.entrySet()) {
-            Matcher matcher = rule.getKey().matcher(parameterName);
-            while (matcher.find()) {
-                parameterName = matcher.replaceFirst(rule.getValue());
-            }
-        }
-
-        return parameterName.toLowerCase(Locale.ROOT);
     }
 
     private static String stripComment(String str) {

@@ -16,6 +16,18 @@ public class Descriptor {
         this.name = className;
     }
 
+    public boolean isPrimitive() {
+        return primitive;
+    }
+
+    public boolean isArray() {
+        return array;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public static Descriptor parse(String desc) {
         boolean primitive = (Utils.PRIMITIVE_TYPES.contains(desc)
                 && (desc.charAt(0) != 'L' && desc.charAt(desc.length() - 1) != ';'));

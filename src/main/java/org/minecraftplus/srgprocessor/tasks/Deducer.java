@@ -2,14 +2,17 @@ package org.minecraftplus.srgprocessor.tasks;
 
 import net.minecraftforge.srgutils.IMappingFile;
 import net.minecraftforge.srgutils.IRenamer;
+import org.minecraftplus.srgprocessor.Utils;
+import org.minecraftplus.srgprocessor.tasks.deducer.Descriptor;
 import org.minecraftplus.srgprocessor.tasks.deducer.Dictionary;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Deducer extends SrgWorker<Deducer>
 {
@@ -43,24 +46,77 @@ public class Deducer extends SrgWorker<Deducer>
         this.outputSrg = input.rename(new IRenamer() {
             @Override
             public String rename(IMappingFile.IParameter value) {
-                String ret = value.getMapped();
+                // Deduce parameter name from class type and rules in dictionary
+                String deduced = value.getMapped();
                 for (Dictionary dictionary : dicts) {
-                    ret = dictionary.deduceName(value);
+                    deduced = deduceName(value, dictionary);
                 }
+
+                // Store used name and add number after if duplicates
+                int counter = 1;
+                String ret = deduced;
+                while (!usedNames.add(ret)) {
+                    ret = deduced + String.valueOf(counter);
+                    counter++;
+                }
+
                 return ret;
             }
 
+            /*
+             * Use this workaround to detect when we are processing new method
+             *  and can clear list of used parameter names
+             */
             @Override
-            public String rename(IMappingFile.IField value) { //FOR DEBUG
+            public String rename(IMappingFile.IMethod value) {
+                usedNames.clear();
+                return value.getMapped();
+            }
+
+            /*
+             * Filter then field records to minimize output file
+             * TODO DELETE THIS, ONLY FOR DEBBUGING!
+             */
+            @Override
+            public String rename(IMappingFile.IField value) {
                 return value.getOriginal();
             }
         });
 
-        this.outputSrg = this.outputSrg.filter(); //FOR DEBUG
+        this.outputSrg = this.outputSrg.filter(); // TODO DELETE THIS, ONLY FOR DEBBUGING!
 
         Nlog("Writing to output...");
         write();
 
         logN("Deducing done!");
+    }
+
+    private Set<String> usedNames = new HashSet();
+
+    public String deduceName(IMappingFile.IParameter parameter, Dictionary dictionary) {
+        IMappingFile.IMethod method = parameter.getParent();
+        String descriptor = method.getMappedDescriptor();
+
+        List<Descriptor> descriptors = Utils.splitMethodDesc(descriptor);
+        Descriptor parameterDescriptor = descriptors.get(parameter.getIndex());
+
+        String parameterName = parameterDescriptor.getName();
+        parameterName = parameterName.substring(parameterName.lastIndexOf("/") + 1);
+        parameterName = parameterName.substring(parameterName.lastIndexOf("$") + 1);
+
+        String[] parameterNameWords = Utils.splitCase(parameterName);
+
+        // Add 'a' prefix to parameters which are arrays
+        if (parameterDescriptor.isArray())
+            parameterName = "a" + parameterName;
+
+        for (Map.Entry<Pattern, String> rule : dictionary.getRules().entrySet()) {
+            Matcher matcher = rule.getKey().matcher(parameterName);
+            while (matcher.find()) {
+                parameterName = matcher.replaceFirst(rule.getValue());
+            }
+        }
+
+        return parameterName.toLowerCase(Locale.ROOT);
     }
 }
