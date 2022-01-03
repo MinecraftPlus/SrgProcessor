@@ -104,6 +104,9 @@ public class Deducer extends SrgWorker<Deducer>
     private Map<String, Integer> statistics = new HashMap();
 
     public String deduceName(IMappingFile.IParameter parameter, Dictionary dictionary) {
+        // Spy how much parameters were processed
+        updateStatistics("parameters_processed");
+
         IMappingFile.IMethod method = parameter.getParent();
         String descriptor = method.getMappedDescriptor();
 
@@ -124,16 +127,23 @@ public class Deducer extends SrgWorker<Deducer>
                 Action action = rule.getValue();
                 parameterName = action.act(matcher);
 
-                // Store usage statistics
-                String pattern = rule.getKey().pattern();
-                Integer stat = statistics.get(pattern);
-                if (stat != null) {
-                    statistics.replace(pattern, ++stat);
-                } else
-                    statistics.put(pattern, 1);
+                // Store pattern usage statistics
+                updateStatistics(rule.getKey().pattern());
             }
         }
 
+        // Store long parameters statistics
+        if (parameterName.length() > 15)
+            updateStatistics("parameters_longer_than_15");
+
         return parameterName.toLowerCase(Locale.ROOT);
+    }
+
+    private void updateStatistics(String key) {
+        Integer stat = statistics.get(key);
+        if (stat != null) {
+            statistics.replace(key, ++stat);
+        } else
+            statistics.put(key, 1);
     }
 }
