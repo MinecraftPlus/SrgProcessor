@@ -3,7 +3,6 @@ package org.minecraftplus.srgprocessor.tasks;
 import net.minecraftforge.srgutils.IMappingFile;
 import net.minecraftforge.srgutils.IRenamer;
 import org.minecraftplus.srgprocessor.Utils;
-import org.minecraftplus.srgprocessor.tasks.deducer.Action;
 import org.minecraftplus.srgprocessor.tasks.deducer.Descriptor;
 import org.minecraftplus.srgprocessor.tasks.deducer.Dictionary;
 
@@ -115,9 +114,7 @@ public class Deducer extends SrgWorker<Deducer>
         updateStatistics("parameters_processed");
 
         IMappingFile.IMethod method = parameter.getParent();
-        String descriptor = method.getMappedDescriptor();
-
-        List<Descriptor> descriptors = Utils.splitMethodDesc(descriptor);
+        List<Descriptor> descriptors = Utils.splitMethodDesc(method.getMappedDescriptor());
         Descriptor parameterDescriptor = descriptors.get(parameter.getIndex());
 
         String parameterName = parameterDescriptor.getName();
@@ -128,14 +125,20 @@ public class Deducer extends SrgWorker<Deducer>
         if (parameterDescriptor.isArray())
             parameterName = "a" + parameterName;
 
-        for (Map.Entry<Pattern, Action> rule : dictionary.getRules().entrySet()) {
-            Matcher matcher = rule.getKey().matcher(parameterName);
-            while (matcher.find()) {
-                Action action = rule.getValue();
-                parameterName = action.act(matcher, parameterDescriptor);
+        for (Map.Entry<Dictionary.Trigger, Dictionary.Action> rule : dictionary.getRules().entrySet()) {
+            Dictionary.Trigger trigger = rule.getKey();
 
-                // Store pattern usage statistics
-                updateStatistics(rule.getKey().pattern());
+            Pattern filter = trigger.getFilter();
+            if (filter != null && !filter.matcher(parameterDescriptor.getName()).matches()) {
+                continue; // Skip dictionary replaces if filter not pass
+            }
+
+            Pattern pattern = trigger.getPattern();
+            Dictionary.Action action = rule.getValue();
+            Matcher matcher = pattern.matcher(parameterName);
+            if (matcher.matches()) { // Only one replace at time
+                parameterName = action.act(matcher);
+                updateStatistics(trigger, action);
             }
         }
 
@@ -144,6 +147,16 @@ public class Deducer extends SrgWorker<Deducer>
             updateStatistics("parameters_longer_than_15");
 
         return parameterName.toLowerCase(Locale.ROOT);
+    }
+
+    private void updateStatistics(Dictionary.Trigger trigger, Dictionary.Action action) {
+        String filter = "";
+        if (trigger.getFilter() != null)
+            filter =  trigger.getFilter().pattern();
+
+        String key = String.format("%20s | %8s:%-20s | %s",
+                trigger.getPattern().pattern(), action.getType(), action.getValue(), filter);
+        updateStatistics(key);
     }
 
     private void updateStatistics(String key) {
