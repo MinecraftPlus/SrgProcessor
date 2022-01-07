@@ -19,9 +19,6 @@ public class DeducerBuilder extends Builder<DeducerBuilder, Deducer> {
 
     @Override
     public Deducer build() {
-        if (dicts.size() == 0)
-            throw new IllegalArgumentException("Builder State Exception: Missing dictionaries");
-
         Deducer worker = new Deducer();
         dicts.forEach(e -> e.accept(worker));
 

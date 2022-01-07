@@ -42,6 +42,13 @@ public class Deducer extends SrgWorker<Deducer>
             log(" class count: " + file.getClasses().size());
         }
 
+        if (dicts.size() > 0) {
+            for (Dictionary dict : dicts) {
+                log("  dictionary: " + dict.getRules().size());
+            }
+        } else
+            dicts.add(new Dictionary());
+
         Nlog("Processing...");
         IMappingFile input = srgs.get(0);
         this.outputSrg = input.rename(new IRenamer() {

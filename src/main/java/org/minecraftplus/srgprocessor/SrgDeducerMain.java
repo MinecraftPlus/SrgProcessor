@@ -22,7 +22,7 @@ public class SrgDeducerMain
         OptionSpec<Path> srgArg = parser.acceptsAll(Arrays.asList("srg", "map", "mapping", "mappingFile")).withRequiredArg()
             .withValuesConvertedBy(PATH_CONVERTER).required();
         OptionSpec<Path> dictArg = parser.acceptsAll(Arrays.asList("dict", "dictionary", "dictionaryFiles")).withRequiredArg()
-            .withValuesConvertedBy(PATH_CONVERTER).required();
+            .withValuesConvertedBy(PATH_CONVERTER);
         OptionSpec<Path> outArg = parser.acceptsAll(Arrays.asList("out", "output", "outDir")).withRequiredArg()
             .withValuesConvertedBy(PATH_CONVERTER).required();
         OptionSpec<Format> formatArg = parser.acceptsAll(Arrays.asList("format", "outputFormat")).withRequiredArg()
@@ -41,19 +41,25 @@ public class SrgDeducerMain
             boolean dryRun = options.has(dryRunArg) || options.valueOf(dryRunArg);
             Path input = options.valueOf(srgArg);
             Path output = options.valueOf(outArg);
-            Path dictionary = options.valueOf(dictArg);
             Format outputFormat = options.valueOf(formatArg);
             boolean reverseOutput = options.has(reverseArg) || options.valueOf(reverseArg);
 
+            DeducerBuilder builder = new DeducerBuilder()
+                    .input(input).output(output).format(outputFormat);
+
             System.out.println("Dry run:         " + dryRun);
             System.out.println("Input:           " + input);
-            System.out.println("Dictionary:      " + dictionary);
+
+            if (options.has(dictArg)) {
+                options.valuesOf(dictArg).forEach(d -> {
+                    System.out.println("Dictionary:     " + d);
+                    builder.dictionary(d);
+                });
+            }
+
             System.out.println("Output:          " + output);
             System.out.println("Output format:   " + outputFormat);
             System.out.println("Reverse output:  " + reverseOutput);
-
-            DeducerBuilder builder = new DeducerBuilder()
-                    .input(input).dictionary(dictionary).output(output).format(outputFormat);
 
             if (dryRun)
                 builder.dryRun();
