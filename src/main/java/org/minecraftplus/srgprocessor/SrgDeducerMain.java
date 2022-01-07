@@ -29,6 +29,8 @@ public class SrgDeducerMain
             .ofType(Format.class).defaultsTo(Format.TSRG2);
         OptionSpec<Boolean> reverseArg = parser.acceptsAll(Arrays.asList("reverse", "reverseOutput")).withOptionalArg()
             .ofType(Boolean.class).defaultsTo(false);
+        OptionSpec<Boolean> collectArg = parser.acceptsAll(Arrays.asList("collect", "reverseOutput")).withOptionalArg()
+            .ofType(Boolean.class).defaultsTo(false);
 
         try {
             OptionSet options = parser.parse(args);
@@ -43,6 +45,7 @@ public class SrgDeducerMain
             Path output = options.valueOf(outArg);
             Format outputFormat = options.valueOf(formatArg);
             boolean reverseOutput = options.has(reverseArg) || options.valueOf(reverseArg);
+            boolean collectStatistics = options.has(collectArg) || options.valueOf(collectArg);
 
             DeducerBuilder builder = new DeducerBuilder()
                     .input(input).output(output).format(outputFormat);
@@ -60,12 +63,16 @@ public class SrgDeducerMain
             System.out.println("Output:          " + output);
             System.out.println("Output format:   " + outputFormat);
             System.out.println("Reverse output:  " + reverseOutput);
+            System.out.println("Statistics:      " + collectStatistics);
 
             if (dryRun)
                 builder.dryRun();
 
             if (reverseOutput)
                 builder.reverseOutput();
+
+            if (collectStatistics)
+                builder.collectStatistics();
 
             builder.build().run();
         } catch (OptionException e) {

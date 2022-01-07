@@ -16,7 +16,8 @@ import java.util.regex.Pattern;
 
 public class Deducer extends SrgWorker<Deducer>
 {
-    List<Dictionary> dicts = new ArrayList<>();
+    private final List<Dictionary> dicts = new ArrayList<>();
+    private boolean collectStats = false;
 
     public void readDictionary(Path value) {
         try (InputStream in = Files.newInputStream(value)) {
@@ -27,28 +28,32 @@ public class Deducer extends SrgWorker<Deducer>
         }
     }
 
+    public void collectStatistics(boolean collect) { this.collectStats = collect; }
+
     @Override
     public void run() throws IOException {
         if (srgs == null)
-            throw new IllegalStateException("Missing Srg srgs");
+            throw new IllegalStateException("Missing input SRG's");
         if (srgs.size() < 1)
-            throw new IllegalStateException("Required 1 srgs to process");
+            throw new IllegalStateException("Required one input SRG process");
         if (outputPath == null)
-            throw new IllegalStateException("Missing Srg output");
+            throw new IllegalStateException("Missing output SRG destination");
 
-        Nlog("Informations:");
+        log("Process informations:");
+        log(" " + srgs.size() + " input srg(s)");
         for (IMappingFile file : srgs) {
-            log(" class count: " + file.getClasses().size());
+            log("  srg (" + file.getClasses().size() + " classes)");
         }
 
         if (dicts.size() > 0) {
+            log(" " + dicts.size() + " dictionary(ies)");
             for (Dictionary dict : dicts) {
-                log("  dictionary: " + dict.getRules().size());
+                log("  dict (" + dict.getRules().size() + " rules)");
             }
         } else
             dicts.add(new Dictionary());
 
-        Nlog("Processing...");
+        log("Deducing parameters...");
         IMappingFile input = srgs.get(0);
         this.outputSrg = input.rename(new IRenamer() {
             @Override
@@ -77,7 +82,7 @@ public class Deducer extends SrgWorker<Deducer>
             @Override
             public String rename(IMappingFile.IMethod value) {
                 usedNames.clear();
-                return value.getMapped();
+                return value.getMapped(); // Don't touch method mapping!!!
             }
 
             /*
@@ -93,21 +98,24 @@ public class Deducer extends SrgWorker<Deducer>
         this.outputSrg = this.outputSrg.filter(); // TODO DELETE THIS, ONLY FOR DEBBUGING!
 
         if (!this.dryRun) {
-            Nlog("Writing to output...");
+            log("Writing to output...");
             write();
         } else {
-            Nlog("No output, dry run used!");
+            log("No output, dry run used!");
         }
 
-        logN("Deducing done!");
+        if (this.collectStats) {
+            Nlog("Collected statistics:");
+            log(String.format("  %8s | %20s | %8s:%-20s | %s", "count", "trigger", "action",  "value", "package filter"));
+            statistics.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .forEach(e -> log(String.format("  %8d | %s", e.getValue(), e.getKey())));
+        }
 
-        log("Statistics of patter usage:");
-        statistics.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .forEach(e -> log(String.format("  %8d | %s", e.getValue(), e.getKey())));
+        Nlog("Deducing task done!");
     }
 
-    private Set<String> usedNames = new HashSet();
-    private Map<String, Integer> statistics = new HashMap();
+    private final Set<String> usedNames = new HashSet<>();
+    private final Map<String, Integer> statistics = new HashMap<>();
 
     public String deduceName(IMappingFile.IParameter parameter, Dictionary dictionary) {
         // Spy how much parameters were processed
@@ -150,6 +158,9 @@ public class Deducer extends SrgWorker<Deducer>
     }
 
     private void updateStatistics(Dictionary.Trigger trigger, Dictionary.Action action) {
+        if (!this.collectStats)
+            return; // Don't collect statistics
+
         String filter = "";
         if (trigger.getFilter() != null)
             filter =  trigger.getFilter().pattern();
@@ -160,6 +171,9 @@ public class Deducer extends SrgWorker<Deducer>
     }
 
     private void updateStatistics(String key) {
+        if (!this.collectStats)
+            return; // Don't collect statistics
+
         Integer stat = statistics.get(key);
         if (stat != null) {
             statistics.replace(key, ++stat);
