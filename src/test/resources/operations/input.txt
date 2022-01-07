@@ -1,0 +1,79 @@
+tsrg2 original mapped
+
+a package/letter/Alfa
+z package/letter/Zulu
+x package/letter/Yankee
+x$a package/letter/Yankee$Symbol
+
+ad some/package/ADClass
+af some/package/AFClass
+sm some/another/package/SMClass
+lf some/another/package/LFClass
+ln some/specific/package/LNClass
+lna some/another/specific/package/LNClass
+
+abc some/package/Alphabet
+	a Labc; field
+	b Lsm; fieldoo
+	c Lad; anotherField
+	d Lx; fieldForSomething
+	e Ljava/util/Map; ohMap
+	f [[Ljava/lang/String; yeeArray
+	g Ljava/util/Set; mmmSet
+	h Llf; tastyField
+
+	<init> (Lsm;Labc;Lad;Lx;Ljava/util/Map;[[Ljava/lang/String;I)V <init>
+
+	a (Llf;Lln;)V constructor
+	a ()Labc$a; get
+	a (Labc;)V do
+	b ()Labc; get
+	c ()Lad; get
+	d ()Lx; get
+	e (Llna;)Ljava/lang/Iterable; get
+	f ()Ljava/util/Map; get
+	g ()I get
+	h ()Lsm; get
+	i ()[[Ljava/lang/String; get
+	j ()Llf; get
+
+	equals (Ljava/lang/Object;S)Z equals
+	hashCode ()I hashCode
+	toString ()Ljava/lang/String; toString
+
+abc$a some/package/Alphabet$InnerClass
+	a Lsm; parentId
+	b Labc; parent
+	c Lad; display
+	d Lx; rewards
+	e Ljava/util/Map; criteria
+	f [[Ljava/lang/String; requirements
+	g Laf; requirementsStrategy
+
+	<init> (Lsm;Lad;Lx;Ljava/util/Map;[[Ljava/lang/String;Labc$1;)V <init>
+	<init> (Lsm;Lad;Llna;Lx;Ljava/util/Map;[[Ljava/lang/String;)V <init>
+	<init> ()V <init>
+
+	a (Lkv;)V constructor
+	a ()Labc$a; get
+	a (Ljava/lang/String;Lz;)Labc$a; add
+	a ([[Ljava/lang/String;Z)Labc$a; requirements
+	a (Lx$a;)Labc$a; rewards
+	a (Lsm;)Labc$a; parent
+	a (Ljava/util/function/Function;)Z can
+	a (Lbjv;Llf;Llf;Lsm;Lae;ZZZ)Labc$a; dsp
+	a (Ljava/lang/String;Lac;)Labc$a; add
+	a (Lben;Llf;Llf;Lsm;Lae;ZZZ)Labc$a; dsp
+	a (Labc;)Labc$a; parent
+	a (Laf;)Labc$a; reqs
+	a (Lad;)Labc$a; display
+	a (Lx;ZZ)Labc$a; rew
+	b ()Lcom/google/gson/JsonObject; serialize
+	b (Lkv;)Labc$a; from
+	b (Lsm;)Labc; build
+	c (Lsm;)Labc; build2
+	c ()Ljava/util/Map; get
+
+	equals (Ljava/lang/Object;)Z equals
+	hashCode ()I hashCode
+	toString ()Ljava/lang/String; toString
