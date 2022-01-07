@@ -3,13 +3,14 @@ package org.minecraftplus.srgprocessor.tasks.deducer;
 import org.minecraftplus.srgprocessor.Utils;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Action {
 
     Type type = Type.RENAME;
     String value;
+    Pattern filter;
 
     public Action(String line) throws IOException {
         String[] pts = line.split(":");
@@ -23,6 +24,10 @@ public class Action {
             this.value = line;
             return;
         }
+
+        // Add package filter if specified
+        if (pts.length >= 3)
+            this.filter = Pattern.compile(pts[2]);
 
         switch (type) {
             case RENAME:
@@ -40,7 +45,27 @@ public class Action {
         }
     }
 
-    public String act(Matcher matcher) {
+    public Type getType() {
+        return type;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public Pattern getFilter() {
+        return filter;
+    }
+
+    public String act(Matcher matcher, Descriptor descriptor) {
+
+        // Check package filter, if not match return untouched
+        if (filter != null) {
+            if (!filter.matcher(descriptor.getName()).matches())
+                return matcher.group();
+        }
+
+        // Do action, return refactored
         switch (type) {
             case RENAME:
                 return matcher.replaceFirst(this.value);

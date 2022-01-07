@@ -125,7 +125,7 @@ public class Deducer extends SrgWorker<Deducer>
             Matcher matcher = rule.getKey().matcher(parameterName);
             while (matcher.find()) {
                 Action action = rule.getValue();
-                parameterName = action.act(matcher);
+                parameterName = action.act(matcher, parameterDescriptor);
 
                 // Store pattern usage statistics
                 updateStatistics(rule.getKey().pattern());
