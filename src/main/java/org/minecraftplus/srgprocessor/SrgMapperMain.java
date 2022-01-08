@@ -55,7 +55,7 @@ public class SrgMapperMain
             if (options.has(srgArg)) {
                 options.valuesOf(srgArg).forEach(v -> {
                     System.out.println("Srg:     " + v);
-                    builder.srg(v);
+                    builder.input(v);
                 });
             }
 
