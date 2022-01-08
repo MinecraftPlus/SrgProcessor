@@ -84,18 +84,7 @@ public class Deducer extends AbstractWorker<Deducer>
                 usedNames.clear();
                 return value.getMapped(); // Don't touch method mapping!!!
             }
-
-            /*
-             * Filter then field records to minimize output file
-             * TODO DELETE THIS, ONLY FOR DEBBUGING!
-             */
-            @Override
-            public String rename(IMappingFile.IField value) {
-                return value.getOriginal();
-            }
         });
-
-        this.outputSrg = this.outputSrg.filter(); // TODO DELETE THIS, ONLY FOR DEBBUGING!
 
         if (!this.dryRun) {
             log("Writing to output...");
