@@ -46,6 +46,10 @@
 
 	<repositories>
 		<repository>
+			<id>minecraftplus</id>
+			<url>https://maven.minecraftplus.org</url>
+		</repository>
+		<repository>
 			<id>forge</id>
 			<url>https://maven.minecraftforge.net</url>
 		</repository>
