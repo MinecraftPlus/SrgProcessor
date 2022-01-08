@@ -39,13 +39,13 @@ public class Cleaner extends AbstractWorker<Cleaner>
         }
 
         log("Cleaning input mapping...");
-        IMappingFile input = srgs.get(0);
+        this.outputSrg = srgs.get(0);
 
         if (inferParameters) {
             log("Infering method parameters...");
             IMappingBuilder builder = IMappingBuilder.create();
 
-            input.getClasses().stream().forEach(cls -> {
+            this.outputSrg.getClasses().stream().forEach(cls -> {
                 IMappingBuilder.IClass builderCls = builder.addClass(cls.getOriginal(), cls.getMapped());
                 cls.getFields().stream().forEach(fld -> {
                     IMappingBuilder.IField builderField = builderCls.field(fld.getOriginal(), fld.getMapped())
