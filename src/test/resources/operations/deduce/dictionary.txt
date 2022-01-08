@@ -1,0 +1,30 @@
+#
+# PATTERN VALUE (means REPLACE action)
+# PATTERN ACTION:VALUE
+# PATTERN:PACKAGE_FILTER VALUE
+# PATTERN:PACKAGE_FILTER ACTION:VALUE
+#
+
+#
+# Primitives
+#
+^Z$ flag       # boolean ok
+^C$ c          # char ok
+^B$ b          # byte ok
+^S$ i          # short ok
+^I$ i          # int ok
+^J$ i          # long ok
+^F$ f          # float ok
+^D$ d          # double ok
+^V$ nothing    # void ok
+
+^String$ s # Convert long 'string' to just 's'
+
+#
+# Dictionary rules
+#
+LFClass lfeed
+SM.*:^some/another/.* PREFIX:pre #some/another/package/SMClass
+LN.* SUFFIX:post
+
+.*:.*/letter/.* PREFIX:letter

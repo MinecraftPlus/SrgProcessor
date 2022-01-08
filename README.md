@@ -10,3 +10,4 @@ See to command line help for list of available parameters using:
 
     java <srgprocessor.jar> --clean --help
     java <srgprocessor.jar> --map --help
+    java <srgprocessor.jar> --deduce --help

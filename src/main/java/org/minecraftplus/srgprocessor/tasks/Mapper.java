@@ -6,7 +6,7 @@ import net.minecraftforge.srgutils.IMappingFile;
 import net.minecraftforge.srgutils.IMappingFile.IClass;
 import net.minecraftforge.srgutils.IRenamer;
 
-public class SrgMapper extends SrgWorker<SrgMapper>
+public class Mapper extends AbstractWorker<Mapper>
 {
     @Override
     public void run() throws IOException {
@@ -64,7 +64,7 @@ public class SrgMapper extends SrgWorker<SrgMapper>
         log("Srg mapping done!\n");
     }
 
-    public enum Mode implements SrgWorker.Mode
+    public enum Mode implements AbstractWorker.Mode
     {
         RENAME("Generate mapping from base original to source mapped"),
         RENAME_CLASSES("Generate mapping from base original to source mapped only for classes"),

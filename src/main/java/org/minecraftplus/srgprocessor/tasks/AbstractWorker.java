@@ -15,7 +15,7 @@ import net.minecraftforge.srgutils.IMappingFile.IField;
 import net.minecraftforge.srgutils.IMappingFile.IMethod;
 import net.minecraftforge.srgutils.IMappingFile.IParameter;
 
-public abstract class SrgWorker<T extends ConfLogger<T>> extends ConfLogger<T>
+public abstract class AbstractWorker<T extends ConfLogger<T>> extends ConfLogger<T>
 {
 
     public final static BiPredicate<IClass, IClass> MATCHING_CLASS = (m1,
@@ -27,12 +27,15 @@ public abstract class SrgWorker<T extends ConfLogger<T>> extends ConfLogger<T>
     public final static BiPredicate<IParameter, Integer> MATCHING_PARAM = (p,
         i) -> (p != null && i != null && p.getIndex() == i);
 
+    boolean dryRun = false;
     List<IMappingFile> srgs = new ArrayList<>();
     Mode mode;
     IMappingFile outputSrg;
     Path outputPath;
     Format outputFormat;
     boolean reverseOutput = false;
+
+    public void dryRun(boolean dryRun) { this.dryRun = dryRun; }
 
     public void readSrg(Path srg) {
         try (InputStream in = Files.newInputStream(srg)) {
