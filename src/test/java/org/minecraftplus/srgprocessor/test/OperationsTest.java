@@ -3,7 +3,7 @@ package org.minecraftplus.srgprocessor.test;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.*;
-import org.minecraftplus.srgprocessor.SrgCleanMain;
+import org.minecraftplus.srgprocessor.api.CleanerBuilder;
 import org.minecraftplus.srgprocessor.api.DeducerBuilder;
 
 import java.io.File;
@@ -45,13 +45,10 @@ public class OperationsTest
     public void testInferring() throws IOException {
         Path pattern = root.resolve("infer/pattern.txt");
 
-        String[] args = new String[] {
-                "--in", input.toString(),
-                "--out", inferred.toString(),
-                "--inferMethodParameters",
-        };
+        CleanerBuilder builder = new CleanerBuilder()
+                .input(input).infer(true).output(inferred);
 
-        SrgCleanMain.main(args); //TODO Make builder for clean task?
+        builder.build().run();
         test(inferred, pattern);
     }
 

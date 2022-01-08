@@ -63,7 +63,7 @@ public abstract class AbstractBuilder<T extends AbstractBuilder, U extends Abstr
 
     public final U postBuild(U worker) {
         if (inputs.size() == 0)
-            throw new IllegalArgumentException("Builder State Exception: Missing mappings");
+            throw new IllegalArgumentException("Builder State Exception: Missing input mappings");
         if (output == null)
             throw new IllegalStateException("Builder State Exception: Missing output destination");
 
