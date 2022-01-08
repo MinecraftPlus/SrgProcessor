@@ -3,8 +3,8 @@ package org.minecraftplus.srgprocessor;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import org.minecraftplus.srgprocessor.api.SrgMapperBuilder;
-import org.minecraftplus.srgprocessor.tasks.SrgMapper.Mode;
+import org.minecraftplus.srgprocessor.api.MapperBuilder;
+import org.minecraftplus.srgprocessor.tasks.Mapper.Mode;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -13,7 +13,7 @@ import joptsimple.ValueConverter;
 import joptsimple.util.PathConverter;
 import net.minecraftforge.srgutils.IMappingFile.Format;
 
-public class SrgMapMain
+public class SrgMapperMain
 {
     private static final ValueConverter<Path> PATH_CONVERTER = new PathConverter();
 
@@ -48,7 +48,7 @@ public class SrgMapMain
             boolean filterSameNames = options.has(filterArg) || options.valueOf(filterArg);
             boolean reverseOutput = options.has(reverseArg) || options.valueOf(reverseArg);
 
-            SrgMapperBuilder builder = new SrgMapperBuilder().mode(jobMode).output(output).format(outputFormat);
+            MapperBuilder builder = new MapperBuilder().mode(jobMode).output(output).format(outputFormat);
 
             System.out.println("Mode:     " + jobMode);
 

@@ -9,7 +9,7 @@ import net.minecraftforge.srgutils.IMappingFile.Format;
 import org.minecraftplus.srgprocessor.tasks.SrgMapper;
 import org.minecraftplus.srgprocessor.tasks.SrgMapper.Mode;
 
-public class SrgMapperBuilder
+public class MapperBuilder
 {
     private PrintStream logStd = System.out;
     private PrintStream logErr = System.err;
@@ -20,22 +20,22 @@ public class SrgMapperBuilder
     private Path output = null;
     private boolean reverseOutput = false;
 
-    public SrgMapperBuilder logger(PrintStream value) {
+    public MapperBuilder logger(PrintStream value) {
         this.logStd = value;
         return this;
     }
 
-    public SrgMapperBuilder errorLogger(PrintStream value) {
+    public MapperBuilder errorLogger(PrintStream value) {
         this.logErr = value;
         return this;
     }
 
-    public SrgMapperBuilder srg(Path value) {
+    public MapperBuilder srg(Path value) {
         this.srgs.add(a -> a.readSrg(value));
         return this;
     }
 
-    public SrgMapperBuilder output(Path value) {
+    public MapperBuilder output(Path value) {
         if (value.getName(value.getNameCount()-1).toString().indexOf('.') > 0) {
             this.output = value;
         } else {
@@ -44,17 +44,17 @@ public class SrgMapperBuilder
         return this;
     }
 
-    public SrgMapperBuilder format(Format value) {
+    public MapperBuilder format(Format value) {
         this.format = value;
         return this;
     }
 
-    public SrgMapperBuilder reverseOutput() {
+    public MapperBuilder reverseOutput() {
         this.reverseOutput = true;
         return this;
     }
 
-    public SrgMapperBuilder mode(Mode value) {
+    public MapperBuilder mode(Mode value) {
         this.mode = value;
         return this;
     }

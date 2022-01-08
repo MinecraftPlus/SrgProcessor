@@ -73,7 +73,7 @@ public class ConsoleTool
 
     private static enum Task
     {
-        MAP(SrgMapMain::main), CLEAN(SrgCleanMain::main), DEDUCE(SrgDeducerMain::main);
+        MAP(SrgMapperMain::main), CLEAN(SrgCleanMain::main), DEDUCE(SrgDeducerMain::main);
 
         private Consumer<String[]> task;
 

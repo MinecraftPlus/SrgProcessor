@@ -6,7 +6,7 @@ import net.minecraftforge.srgutils.IMappingFile;
 import net.minecraftforge.srgutils.IMappingFile.IClass;
 import net.minecraftforge.srgutils.IRenamer;
 
-public class SrgMapper extends SrgWorker<SrgMapper>
+public class Mapper extends SrgWorker<Mapper>
 {
     @Override
     public void run() throws IOException {
