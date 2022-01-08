@@ -19,7 +19,7 @@ public class OperationsTest
 {
     final Path root = getRoot().resolve("operations/");
     static final FileSystem imfs = Jimfs.newFileSystem(Configuration.unix());
-    Path input, inferred, dictionary, deduced;
+    Path input, input_inferred, dictionary, inferred, filtered, cleaned, deduced;
 
     private Path getRoot() {
         URL url = this.getClass().getResource("/test.marker");
@@ -34,33 +34,61 @@ public class OperationsTest
 
     @BeforeEach
     public void init() throws IOException {
+        // Inputs
         input = root.resolve("input.txt");
-        inferred = root.resolve("infer/inferred.txt");
+        input_inferred = root.resolve("input_inferred.txt");
         dictionary = root.resolve("deduce/dictionary.txt");
+
+        // Results
+        inferred = root.resolve("clean/inferred.txt");
+        filtered = root.resolve("clean/filtered.txt");
+        cleaned = root.resolve("clean/cleaned.txt");
         deduced = root.resolve("deduce/deduced.txt");
     }
 
     @Test
-    @Order(1)
-    public void testInferring() throws IOException {
-        Path pattern = root.resolve("infer/pattern.txt");
+    public void testOnlyInferring() throws IOException {
+        Path pattern = root.resolve("clean/infer/pattern.txt");
 
         CleanerBuilder builder = new CleanerBuilder()
-                .input(input).infer(true).output(inferred);
+                .input(input).output(inferred)
+                .infer(true);
 
         builder.build().run();
         test(inferred, pattern);
     }
 
     @Test
-    @Order(2)
+    public void testOnlyFiltering() throws IOException {
+        Path pattern = root.resolve("clean/filter/pattern.txt");
+
+        CleanerBuilder builder = new CleanerBuilder()
+                .input(input).output(filtered)
+                .filter(true);
+
+        builder.build().run();
+        test(filtered, pattern);
+    }
+
+    @Test
+    public void testCleaning() throws IOException {
+        Path pattern = root.resolve("clean/pattern.txt");
+
+        CleanerBuilder builder = new CleanerBuilder()
+                .input(input).output(cleaned)
+                .infer(true).filter(true);
+
+        builder.build().run();
+        test(cleaned, pattern);
+    }
+
+    @Test
     public void testDeducing() throws IOException {
         Path pattern = root.resolve("deduce/pattern.txt");
 
         DeducerBuilder builder = new DeducerBuilder()
-                .collectStatistics()
-                .input(root.resolve("infer/pattern.txt")) // use inferred SRG
-                .dictionary(dictionary).output(deduced);
+                .input(input_inferred).output(deduced)
+                .dictionary(dictionary).collectStatistics();
 
         builder.build().run();
         test(deduced, pattern);

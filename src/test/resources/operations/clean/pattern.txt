@@ -10,34 +10,32 @@ abc some/package/Alphabet
 	g Ljava/util/Set; mmmSet
 	h Llf; tastyField
 	<init> (Lsm;Labc;Lad;Lx;Ljava/util/Map;[[Ljava/lang/String;I)V <init>
-		0 inferred presmclass
-		1 inferred alphabet
-		2 inferred adclass
-		3 inferred letteryankee
-		4 inferred map
-		5 inferred astring
-		6 inferred i
+		0 inferred p_Alphabet_1
+		1 inferred p_Alphabet_2
+		2 inferred p_Alphabet_3
+		3 inferred p_Alphabet_4
+		4 inferred p_Alphabet_5
+		5 inferred p_Alphabet_6
+		6 inferred p_Alphabet_7
 	a ()Labc$a; get
 	a (Llf;Lln;)V constructor
-		0 inferred lfeed
-		1 inferred lnclasspost
+		0 inferred p_constructor_1
+		1 inferred p_constructor_2
 	a (Labc;)V do
-		0 inferred alphabet
+		0 inferred p_do_1
 	b ()Labc; get
 	c ()Lad; get
 	d ()Lx; get
 	e (Llna;)Ljava/lang/Iterable; get
-		0 inferred lnclasspost
+		0 inferred p_get_1
 	equals (Ljava/lang/Object;S)Z equals
-		0 inferred object
-		1 inferred i
+		0 inferred p_equals_1
+		1 inferred p_equals_2
 	f ()Ljava/util/Map; get
 	g ()I get
 	h ()Lsm; get
-	hashCode ()I hashCode
 	i ()[[Ljava/lang/String; get
 	j ()Llf; get
-	toString ()Ljava/lang/String; toString
 abc$a some/package/Alphabet$InnerClass
 	a Lsm; parentId
 	b Labc; parent
@@ -47,78 +45,76 @@ abc$a some/package/Alphabet$InnerClass
 	f [[Ljava/lang/String; requirements
 	g Laf; requirementsStrategy
 	<init> (Lsm;Lad;Lx;Ljava/util/Map;[[Ljava/lang/String;Labc$1;)V <init>
-		0 inferred presmclass
-		1 inferred adclass
-		2 inferred letteryankee
-		3 inferred map
-		4 inferred astring
-		5 inferred 1
+		0 inferred p_InnerClass_1
+		1 inferred p_InnerClass_2
+		2 inferred p_InnerClass_3
+		3 inferred p_InnerClass_4
+		4 inferred p_InnerClass_5
+		5 inferred p_InnerClass_6
 	<init> (Lsm;Lad;Llna;Lx;Ljava/util/Map;[[Ljava/lang/String;)V <init>
-		0 inferred presmclass
-		1 inferred adclass
-		2 inferred lnclasspost
-		3 inferred letteryankee
-		4 inferred map
-		5 inferred astring
+		0 inferred p_InnerClass_1
+		1 inferred p_InnerClass_2
+		2 inferred p_InnerClass_3
+		3 inferred p_InnerClass_4
+		4 inferred p_InnerClass_5
+		5 inferred p_InnerClass_6
 	<init> ()V <init>
-	a (Ljava/lang/String;Lz;)Labc$a; add
-		0 inferred s
-		1 inferred letterzulu
-	a (Lx;ZZ)Labc$a; rew
-		0 inferred letteryankee
-		1 inferred flag
-		2 inferred flag1
-	a (Lkv;)V constructor
-		0 inferred kv
-	a (Lad;)Labc$a; display
-		0 inferred adclass
-	a (Lx$a;)Labc$a; rewards
-		0 inferred lettersymbol
 	a ()Labc$a; get
 	a (Laf;)Labc$a; reqs
-		0 inferred afclass
+		0 inferred p_reqs_1
+	a (Ljava/lang/String;Lz;)Labc$a; add
+		0 inferred p_add_1
+		1 inferred p_add_2
 	a ([[Ljava/lang/String;Z)Labc$a; requirements
-		0 inferred astring
-		1 inferred flag
+		0 inferred p_requirements_1
+		1 inferred p_requirements_2
 	a (Labc;)Labc$a; parent
-		0 inferred alphabet
+		0 inferred p_parent_1
+	a (Lx;ZZ)Labc$a; rew
+		0 inferred p_rew_1
+		1 inferred p_rew_2
+		2 inferred p_rew_3
 	a (Ljava/util/function/Function;)Z can
-		0 inferred function
+		0 inferred p_can_1
+	a (Lkv;)V constructor
+		0 inferred p_constructor_1
+	a (Lad;)Labc$a; display
+		0 inferred p_display_1
 	a (Lbjv;Llf;Llf;Lsm;Lae;ZZZ)Labc$a; dsp
-		0 inferred bjv
-		1 inferred lfeed
-		2 inferred lfeed1
-		3 inferred presmclass
-		4 inferred ae
-		5 inferred flag
-		6 inferred flag1
-		7 inferred flag2
+		0 inferred p_dsp_1
+		1 inferred p_dsp_2
+		2 inferred p_dsp_3
+		3 inferred p_dsp_4
+		4 inferred p_dsp_5
+		5 inferred p_dsp_6
+		6 inferred p_dsp_7
+		7 inferred p_dsp_8
 	a (Lben;Llf;Llf;Lsm;Lae;ZZZ)Labc$a; dsp
-		0 inferred ben
-		1 inferred lfeed
-		2 inferred lfeed1
-		3 inferred presmclass
-		4 inferred ae
-		5 inferred flag
-		6 inferred flag1
-		7 inferred flag2
+		0 inferred p_dsp_1
+		1 inferred p_dsp_2
+		2 inferred p_dsp_3
+		3 inferred p_dsp_4
+		4 inferred p_dsp_5
+		5 inferred p_dsp_6
+		6 inferred p_dsp_7
+		7 inferred p_dsp_8
+	a (Lx$a;)Labc$a; rewards
+		0 inferred p_rewards_1
 	a (Ljava/lang/String;Lac;)Labc$a; add
-		0 inferred s
-		1 inferred ac
+		0 inferred p_add_1
+		1 inferred p_add_2
 	a (Lsm;)Labc$a; parent
-		0 inferred presmclass
+		0 inferred p_parent_1
 	b ()Lcom/google/gson/JsonObject; serialize
 	b (Lsm;)Labc; build
-		0 inferred presmclass
+		0 inferred p_build_1
 	b (Lkv;)Labc$a; from
-		0 inferred kv
-	c ()Ljava/util/Map; get
+		0 inferred p_from_1
 	c (Lsm;)Labc; build2
-		0 inferred presmclass
+		0 inferred p_build2_1
+	c ()Ljava/util/Map; get
 	equals (Ljava/lang/Object;)Z equals
-		0 inferred object
-	hashCode ()I hashCode
-	toString ()Ljava/lang/String; toString
+		0 inferred p_equals_1
 ad some/package/ADClass
 af some/package/AFClass
 lf some/another/package/LFClass
