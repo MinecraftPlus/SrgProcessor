@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Deducer extends SrgWorker<Deducer>
+public class Deducer extends AbstractWorker<Deducer>
 {
     private final List<Dictionary> dicts = new ArrayList<>();
     private boolean collectStats = false;

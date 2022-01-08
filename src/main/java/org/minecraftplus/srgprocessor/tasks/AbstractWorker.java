@@ -15,7 +15,7 @@ import net.minecraftforge.srgutils.IMappingFile.IField;
 import net.minecraftforge.srgutils.IMappingFile.IMethod;
 import net.minecraftforge.srgutils.IMappingFile.IParameter;
 
-public abstract class SrgWorker<T extends ConfLogger<T>> extends ConfLogger<T>
+public abstract class AbstractWorker<T extends ConfLogger<T>> extends ConfLogger<T>
 {
 
     public final static BiPredicate<IClass, IClass> MATCHING_CLASS = (m1,

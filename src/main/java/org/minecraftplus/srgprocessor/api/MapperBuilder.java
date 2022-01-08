@@ -3,7 +3,7 @@ package org.minecraftplus.srgprocessor.api;
 import org.minecraftplus.srgprocessor.tasks.Mapper;
 import org.minecraftplus.srgprocessor.tasks.Mapper.Mode;
 
-public class MapperBuilder extends Builder<MapperBuilder, Mapper> {
+public class MapperBuilder extends AbstractBuilder<MapperBuilder, Mapper> {
 
     private Mode mode = Mode.RENAME;
 

@@ -1,7 +1,7 @@
 package org.minecraftplus.srgprocessor.api;
 
 import net.minecraftforge.srgutils.IMappingFile;
-import org.minecraftplus.srgprocessor.tasks.SrgWorker;
+import org.minecraftplus.srgprocessor.tasks.AbstractWorker;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class Builder<T extends Builder, U extends SrgWorker> {
+public abstract class AbstractBuilder<T extends AbstractBuilder, U extends AbstractWorker> {
 
     PrintStream logStd = System.out;
     PrintStream logErr = System.err;
