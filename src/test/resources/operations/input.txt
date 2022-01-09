@@ -28,6 +28,7 @@ abc some/package/Alphabet
 	a ()Labc$a; get
 	a (Labc;)V do
 	b ()Labc; get
+		static
 	c ()Lad; get
 	d ()Lx; get
 	e (Llna;)Ljava/lang/Iterable; get
@@ -57,6 +58,7 @@ abc$a some/package/Alphabet$InnerClass
 	a (Lkv;)V constructor
 	a ()Labc$a; get
 	a (Ljava/lang/String;Lz;)Labc$a; add
+		static
 	a ([[Ljava/lang/String;Z)Labc$a; requirements
 	a (Lx$a;)Labc$a; rewards
 	a (Lsm;)Labc$a; parent

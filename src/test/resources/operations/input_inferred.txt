@@ -38,6 +38,7 @@ abc some/package/Alphabet
 	a (Labc;)V do
 		0 inferred p_do_1
 	b ()Labc; get
+		static
 	c ()Lad; get
 	d ()Lx; get
 	e (Llna;)Ljava/lang/Iterable; get
@@ -83,6 +84,7 @@ abc$a some/package/Alphabet$InnerClass
 		0 inferred p_constructor_1
 	a ()Labc$a; get
 	a (Ljava/lang/String;Lz;)Labc$a; add
+		static
 		0 inferred p_add_1
 		1 inferred p_add_2
 	a ([[Ljava/lang/String;Z)Labc$a; requirements
