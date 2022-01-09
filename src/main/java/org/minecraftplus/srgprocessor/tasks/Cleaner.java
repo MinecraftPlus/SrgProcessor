@@ -47,12 +47,15 @@ public class Cleaner extends AbstractWorker<Cleaner>
 
             this.outputSrg.getClasses().stream().forEach(cls -> {
                 IMappingBuilder.IClass builderCls = builder.addClass(cls.getOriginal(), cls.getMapped());
+                cls.getMetadata().entrySet().stream().forEach(m -> builderCls.meta(m.getKey(), m.getValue()));
                 cls.getFields().stream().forEach(fld -> {
                     IMappingBuilder.IField builderField = builderCls.field(fld.getOriginal(), fld.getMapped())
                             .descriptor(fld.getDescriptor()); // TODO Maybe can do add descriptor in .field(o, m) method?
+                    fld.getMetadata().entrySet().stream().forEach(m -> builderField.meta(m.getKey(), m.getValue()));
                 });
                 cls.getMethods().stream().forEach(mtd -> {
                     IMappingBuilder.IMethod builderMtd = builderCls.method(mtd.getDescriptor(), mtd.getOriginal(), mtd.getMapped());
+                    mtd.getMetadata().entrySet().stream().forEach(m -> builderMtd.meta(m.getKey(), m.getValue()));
 
                     // Get method parameter list from descriptor
                     ArrayList<Descriptor> parameters = Utils.splitMethodDesc(mtd.getDescriptor());

@@ -24,6 +24,7 @@ abc some/package/Alphabet
 	a (Labc;)V do
 		0 inferred alphabet
 	b ()Labc; get
+		static
 	c ()Lad; get
 	d ()Lx; get
 	e (Llna;)Ljava/lang/Iterable; get
@@ -62,6 +63,7 @@ abc$a some/package/Alphabet$InnerClass
 		5 inferred astring
 	<init> ()V <init>
 	a (Ljava/lang/String;Lz;)Labc$a; add
+		static
 		0 inferred s
 		1 inferred letterzulu
 	a (Lx;ZZ)Labc$a; rew
