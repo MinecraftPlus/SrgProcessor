@@ -4,8 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.minecraftplus</groupId>
 	<artifactId>srgprocessor</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<name>SrgProcessor</name>
+
+	<distributionManagement>
+		<repository>
+			<id>minecraftplus</id>
+			<name>MineraftPlus Maven Public Repository</name>
+			<url>https://maven.minecraftplus.org/</url>
+		</repository>
+	</distributionManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
